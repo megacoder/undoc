@@ -1,0 +1,39 @@
+#!/bin/bash
+# Simple script to extract text and images from a word document
+# e.g. screenshot.doc ;-)
+# Requires abiword and wv
+
+VIEWER=eog
+TXTVIEWER=gedit
+Usage () {
+    echo "Usage: $0 DOCFILE OUTDIR"
+    exit
+}
+if [ ! $# == 2 ];
+
+then 
+    Usage
+fi
+
+
+DOCFILE="$1"
+OUTDIR="$2"
+BN=$(basename "$DOCFILE")
+EXT=${DOCFILE##*.}
+UUID=$(uuidgen)
+TMPFILE=/tmp/$UUID.$EXT
+cp "$DOCFILE" "$TMPFILE"
+abiword --to=sxw "$TMPFILE"
+if unzip -l /tmp/$UUID.sxw | grep Pictures
+then
+  IMAGEPATH=Pictures
+elif unzip -l /tmp/$UUID.sxw | grep word
+then
+  IMAGEPATH='word/media'
+fi
+unzip -q -d $OUTDIR /tmp/$UUID.sxw "$IMAGEPATH/*"
+abiword --to=txt --to-name="${OUTDIR}/text" $TMPFILE
+rm $TMPFILE
+ls -R $OUTDIR
+$VIEWER $OUTDIR/$IMAGEPATH/ &
+$TXTVIEWER $OUTDIR/text &
