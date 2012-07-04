@@ -1,39 +1,38 @@
-#!/bin/bash
+#!/bin/sh
+# vim: noet sw=8 ts=8
 # Simple script to extract text and images from a word document
 # e.g. screenshot.doc ;-)
 # Requires abiword and wv
 
-VIEWER=eog
-TXTVIEWER=gedit
-Usage () {
-    echo "Usage: $0 DOCFILE OUTDIR"
-    exit
-}
-if [ ! $# == 2 ];
-
-then 
-    Usage
+ME=`basename ${0}`
+USAGE="usage: ${ME} <docfile> <outdir>"
+while getopts e:v: c; do
+	case "${c}" in
+	e)	VISUAL="${OPTARG}";;
+	v)	VIEWER="${OPTARG}";;
+	*)	echo "${USAGE}" >&2; exit 1;;
+	esac
+done
+shift `expr ${OPTIND} - 1`
+if [ $# -ne 2 ];then
+	echo "${USAGE}" >&2
+	exit 1
 fi
-
-
-DOCFILE="$1"
-OUTDIR="$2"
-BN=$(basename "$DOCFILE")
-EXT=${DOCFILE##*.}
-UUID=$(uuidgen)
-TMPFILE=/tmp/$UUID.$EXT
-cp "$DOCFILE" "$TMPFILE"
-abiword --to=sxw "$TMPFILE"
-if unzip -l /tmp/$UUID.sxw | grep Pictures
-then
-  IMAGEPATH=Pictures
-elif unzip -l /tmp/$UUID.sxw | grep word
-then
-  IMAGEPATH='word/media'
+DOCFILE="${1}"
+OUTDIR="${2}"
+BN=`basename -- "${DOCFILE}"`
+EXT=`echo -- "${DOCFILE}" | sed -e 's/.*[.]//'`
+TMPFILE=${TMP:-${TMPDIR:-/tmp}}/"${ME}-$$.${EXT}"
+cp -f -- "${DOCFILE}" "${TMPFILE}"
+abiword --to="sxw" -- "${TMPFILE}"
+if unzip -l "/tmp/$$.sxw" | fgrep Pictures; then
+	IMAGEPATH='Pictures'
+elif unzip -l "/tmp/$$.sxw" | fgrep word; then
+	IMAGEPATH='word/media'
 fi
-unzip -q -d $OUTDIR /tmp/$UUID.sxw "$IMAGEPATH/*"
-abiword --to=txt --to-name="${OUTDIR}/text" $TMPFILE
-rm $TMPFILE
-ls -R $OUTDIR
-$VIEWER $OUTDIR/$IMAGEPATH/ &
-$TXTVIEWER $OUTDIR/text &
+unzip -q -d "${OUTDIR}" "/tmp/$$.sxw" "${IMAGEPATH}/*"
+abiword --to=txt --to-name="${OUTDIR}/text" "${TMPFILE}"
+rm -f "${TMPFILE}"
+ls -R -- "${OUTDIR}"
+${VIEWER:-eog} -- "${OUTDIR}/${IMAGEPATH}/" &
+${VISUAL:-${EDITOR:-gedit}} -- "${OUTDIR}/text" &
