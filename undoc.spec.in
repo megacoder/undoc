@@ -1,0 +1,41 @@
+%define ver @VERSION@
+%define rel 1
+%define prefix /usr
+
+Prefix: %{prefix}
+
+Summary: Extract goodies from a M$ word file.
+Name: undoc
+Version: %{ver}
+Release: %{rel}
+Source: http://ftp.megacoder.com/undoc/%{name}-%{ver}.tar.gz
+License: GPLv2
+URL: http://www.megacoder.com/
+Group: Applications/System
+Buildroot: %{_tmppath}/%{name}-root
+
+%description
+Extract goodies from a M$ word file.
+
+%prep
+
+%setup -q
+%build
+	CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{prefix}
+	make
+
+%install
+	rm -rf ${RPM_BUILD_ROOT}
+	make prefix=${RPM_BUILD_ROOT}%{prefix} install
+
+%clean
+	rm -rf ${RPM_BUILD_ROOT}
+
+%files
+%defattr(-,root,root)
+%doc AUTHORS COPYING README INSTALL NEWS LICENSE TODO
+%{_bindir}/%{name}
+
+%changelog
+* Tue May 16 2009 Tommy Reynolds <Tommy.Reynolds@MegaCoder.com>
+- Booger
