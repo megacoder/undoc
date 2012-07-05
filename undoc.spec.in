@@ -13,6 +13,7 @@ License: GPLv2
 URL: http://www.megacoder.com/
 Group: Applications/System
 Buildroot: %{_tmppath}/%{name}-root
+Requires: abiword
 
 %description
 Extract goodies from a M$ word file.
