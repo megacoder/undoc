@@ -7,27 +7,27 @@
 ME=`basename ${0}`
 USAGE="usage: ${ME} <docfile> <outdir>"
 while getopts e:v: c; do
-	case "${c}" in
-	e)	VISUAL="${OPTARG}";;
-	v)	VIEWER="${OPTARG}";;
-	*)	echo "${USAGE}" >&2; exit 1;;
+	case ${c} in
+	e)	VISUAL=${OPTARG};;
+	v)	VIEWER=${OPTARG};;
+	*)	echo ${USAGE} >&2; exit 1;;
 	esac
 done
 shift `expr ${OPTIND} - 1`
 if [ $# -ne 2 ];then
-	echo "${USAGE}" >&2
+	echo ${USAGE} >&2
 	exit 1
 fi
 
 
-DOCFILE="$1"
-OUTDIR="$2"
-BN=$(basename "$DOCFILE")
+DOCFILE=$1
+OUTDIR=$2
+BN=$(basename $DOCFILE)
 EXT=${DOCFILE##*.}
 UUID=$(uuidgen)
 TMPFILE=/tmp/$UUID.$EXT
-cp "$DOCFILE" "$TMPFILE"
-abiword --to=sxw "$TMPFILE"
+cp $DOCFILE $TMPFILE
+abiword --to=sxw $TMPFILE
 if unzip -l /tmp/$UUID.sxw | grep Pictures
 then
   IMAGEPATH=Pictures
@@ -35,21 +35,21 @@ elif unzip -l /tmp/$UUID.sxw | grep word
 then
   IMAGEPATH='word/media'
 fi
-unzip -q -d "${OUTDIR}" "/tmp/$$.sxw" "${IMAGEPATH}/*"
-abiword --to=txt --to-name="${OUTDIR}/text" "${TMPFILE}"
-rm -f "${TMPFILE}"
-ls -R -- "${OUTDIR}"
-${VIEWER:-eog} -- "${OUTDIR}/${IMAGEPATH}/" &
-${VISUAL:-${EDITOR:-gedit}} -- "${OUTDIR}/text" &
-unzip -q -d $OUTDIR /tmp/$UUID.sxw "$IMAGEPATH/*"
-abiword --to=txt --to-name="${OUTDIR}/text" $TMPFILE
+unzip -q -d ${OUTDIR} /tmp/$$.sxw ${IMAGEPATH}/*
+abiword --to=txt --to-name=${OUTDIR}/text ${TMPFILE}
+rm -f ${TMPFILE}
+ls -R -- ${OUTDIR}
+${VIEWER:-eog} -- ${OUTDIR}/${IMAGEPATH}/ &
+${VISUAL:-${EDITOR:-gedit}} -- ${OUTDIR}/text &
+unzip -q -d $OUTDIR /tmp/$UUID.sxw $IMAGEPATH/*
+abiword --to=txt --to-name=${OUTDIR}/text $TMPFILE
 rm $TMPFILE
 ls -R $OUTDIR
-if [ -n "$VIEWER" ];
+if [ -n $VIEWER ];
 then
     $VIEWER $OUTDIR/$IMAGEPATH/ &
 fi
-if [ -n "$TXTVIEWER" ];
+if [ -n $TXTVIEWER ];
 then
     $TXTVIEWER $OUTDIR/text &
 fi
