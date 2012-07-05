@@ -22,34 +22,12 @@ if [ $# -ne 2 ];then
 fi
 DOCFILE="${1}"
 OUTDIR="${2}"
-BN=$(basename -- "${DOCFILE}")
-EXT="${DOCFILE##*.}"
-UUID=$(uuidgen)
-TMPFILE=/tmp/"${UUID}."${EXT}""
-cp -- "${DOCFILE}" "${TMPFILE}"
-abiword --to=sxw -- "${TMPFILE}"
-if unzip -l /tmp/"${UUID}".sxw | grep Pictures
-then
-  IMAGEPATH=Pictures
-elif unzip -l /tmp/"${UUID}".sxw | grep word
-then
-  IMAGEPATH='word/media'
-fi
-unzip -q -d -- "${OUTDIR}" /tmp/$$.sxw "${IMAGEPATH}"/*
-abiword --to=txt --to-name="${OUTDIR}"/text -- "${TMPFILE}"
-rm -f -- "${TMPFILE}"
-ls -R -- "${OUTDIR}"
-${VIEWER:-eog} -- "${OUTDIR}"/"${IMAGEPATH}"/ &
-${VISUAL:-"${EDITOR:-gedit}"} -- "${OUTDIR}"/text &
-unzip -q -d -- "${OUTDIR}" /tmp/"${UUID}".sxw "${IMAGEPATH}"/*
-abiword --to=txt --to-name="${OUTDIR}"/text -- "${TMPFILE}"
-rm -- "${TMPFILE}"
-ls -R -- "${OUTDIR}"
-if [ -n "${VIEWER}" ];
-then
-    eval "${VIEWER}" -- "${OUTDIR}"/"${IMAGEPATH}"/ &
-fi
-if [ -n "${TXTVIEWER}" ];
-then
-    eval "${TXTVIEWER}" -- "${OUTDIR}"/text &
-fi
+BN=${DOCFILE##*/}
+FN=${BN%%.*}
+mkdir -p "${OUTDIR}/x-files" "${OUTDIR}/tmp"
+abiword --to=txt --to-name="${OUTDIR}/${FN}.txt" "${DOCFILE}"
+SXWFILE="${OUTDIR}/tmp/${FN}.$$.sxw"
+trap "rm -f -- ${SWXFILE}" 0
+abiword --to=sxw --to-name="${SXWFILE}" "${DOCFILE}"
+unzip -d "${OUTDIR}/x-files/" "${SXWFILE}"
+trap "" 0
