@@ -3,6 +3,7 @@
 # Simple script to extract text and images from a word document
 # e.g. screenshot.doc ;-)
 # Requires abiword and wv
+set -e
 ME=`basename "${0}"`
 USAGE="usage: ${ME} [-e editor] [-v viewer] <docfile> <outdir>"
 while getopts e:v:xz c; do
@@ -10,7 +11,7 @@ while getopts e:v:xz c; do
 	e)	VISUAL="${OPTARG}";;
 	v)	VIEWER="${OPTARG}";;
 	x)	set -x;;
-	z)	set -e;;
+	z)	set +e;;
 	*)	echo "${USAGE}" >&2; exit 1;;
 	esac
 done
