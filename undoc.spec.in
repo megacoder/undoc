@@ -14,6 +14,7 @@ URL: http://www.megacoder.com/
 Group: Applications/System
 Buildroot: %{_tmppath}/%{name}-root
 Requires: abiword
+BuildRequires: python-markdown2
 
 %description
 Extract goodies from a M$ word file.

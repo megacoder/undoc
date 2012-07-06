@@ -8,3 +8,6 @@ EXTRA_DIST=\
 	   NEWS		\
 	   LICENSE	\
 	   TODO
+
+README:: README.md
+	markdown2 $< >$@
