@@ -12,7 +12,8 @@ Source: http://ftp.megacoder.com/undoc/%{name}-%{ver}.tar.gz
 License: GPLv2
 URL: http://www.megacoder.com/
 Group: Applications/System
-Buildroot: %{_tmppath}/%{name}-root
+BuildRoot: %{_tmppath}/%{name}-root
+BuildArch: noarch
 Requires: abiword
 BuildRequires: python-markdown2
 
