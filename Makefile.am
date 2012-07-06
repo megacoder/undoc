@@ -3,7 +3,7 @@ SUBDIRS	=src
 EXTRA_DIST=\
 	   AUTHORS	\
 	   COPYING	\
-	   README	\
+	   README.md	\
 	   INSTALL	\
 	   NEWS		\
 	   LICENSE	\

@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.68])
-AC_INIT([undoc], [1.0.0], [Tommy.Reynolds@MegaCoder.com])
+AC_INIT([undoc], [1.0.1], [Tommy.Reynolds@MegaCoder.com])
 
 AM_INIT_AUTOMAKE
 
